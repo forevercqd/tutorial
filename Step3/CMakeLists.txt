@@ -19,6 +19,11 @@ configure_file (
 # so that we will find TutorialConfig.h
 include_directories ("${PROJECT_BINARY_DIR}")
 
+
+# 此处的设置必须放到 add_subdirectory 前设置，否则里面访问的变量为空;
+# 如果需要父目录中访问子目录中的变量，则需要使用  set(OUT_DIR "${PROJECT_SOURCE_DIR}/out" CACHE PATH "output directory") 用
+set(OUT_DIR "${PROJECT_SOURCE_DIR}/out")
+
 # add the MathFunctions library?
 if (USE_MYMATH)
   include_directories ("${PROJECT_SOURCE_DIR}/MathFunctions")
@@ -30,10 +35,19 @@ endif ()
 add_executable (Tutorial tutorial.cxx)
 target_link_libraries (Tutorial  ${EXTRA_LIBS})
 
+add_custom_command(TARGET Tutorial PRE_BUILD
+  COMMAND mkdir -p ${OUT_DIR}
+  COMMAND mkdir -p ${OUT_DIR}/bin
+  COMMAND mkdir -p ${OUT_DIR}/include
+  DEPENDS Tutorial
+)
+
 # add the install targets
-install (TARGETS Tutorial DESTINATION bin)
+install (TARGETS Tutorial 
+  DESTINATION ${OUT_DIR}/bin)
+
 install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h"
-  DESTINATION include)
+  DESTINATION ${OUT_DIR}/include)
 
 
 # enable testing
