@@ -5,6 +5,9 @@ project (Tutorial)
 set (Tutorial_VERSION_MAJOR 1)
 set (Tutorial_VERSION_MINOR 0)
 
+# 打印编译参数
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # should we use our own math functions
 option(USE_MYMATH "Use tutorial provided math implementation" ON)
 
@@ -17,8 +20,7 @@ configure_file (
 
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
-include_directories ("${PROJECT_BINARY_DIR}")
-
+# include_directories ("${PROJECT_BINARY_DIR}")
 
 # 此处的设置必须放到 add_subdirectory 前设置，否则里面访问的变量为空;
 # 如果需要父目录中访问子目录中的变量，则需要使用  set(OUT_DIR "${PROJECT_SOURCE_DIR}/out" CACHE PATH "output directory") 用
@@ -35,10 +37,16 @@ endif ()
 add_executable (Tutorial tutorial.cxx)
 target_link_libraries (Tutorial  ${EXTRA_LIBS})
 
+target_include_directories(
+  Tutorial 
+  PUBLIC 
+  ${PROJECT_BINARY_DIR})
+
 add_custom_command(TARGET Tutorial PRE_BUILD
   COMMAND mkdir -p ${OUT_DIR}
   COMMAND mkdir -p ${OUT_DIR}/bin
   COMMAND mkdir -p ${OUT_DIR}/include
+  COMMAND ${CMAKE_COMMAND} -E echo mkdir finish
   DEPENDS Tutorial
 )
 
