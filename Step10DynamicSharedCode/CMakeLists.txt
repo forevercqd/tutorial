@@ -2,10 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(DemoProj)
 
-
-set(LIBRARY_OUTPUT_PATH ./)
-
-add_subdirectory(lib)
+add_subdirectory(lib)   # 引用内部库
 
 foreach(curExe program1 program2 program3)
     message("cqd, curExe = ${curExe}")
